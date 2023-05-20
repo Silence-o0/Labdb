@@ -1,0 +1,48 @@
+{% extends 'base-table-page.html' %}
+{% load static %}
+
+{% block datatable %}
+<table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+        <th scope="col">Sex</th>
+        <th scope="col">Birthdate</th>
+        <th scope="col">Experiences (years)</th>
+        <th scope="col">Position</th>
+        <th scope="col">Theaters</th>
+        <th scope="col" style="width: 200px;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in employees %}
+    <tr>
+        <th scope="row">{{ e.passport }}</th>
+        <td>{{ e.name }}</td>
+        <td>{{ e.sex }}</td>
+        {% if e.birthdate != None %}
+      <td><div>{{ e.birthdate }}</div></td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td>{{ e.experience }}</td>
+        <td>{{ e.position }}</td>
+        {% if e.theater != None %}
+      <td><div>
+          {% for th in e.theater.split %}
+          {{ th.name }}
+          {% endfor %}
+        </div></td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td>
+            <button type="button" class="btn btn-outline-success" onclick="location.href='./edit/{{ e.passport }}'">Edit</button>
+            <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ e.passport }}'">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

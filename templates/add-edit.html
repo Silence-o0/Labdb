@@ -1,0 +1,24 @@
+{% extends 'base-add-page.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block formdata %}
+    <form method=POST class="container mt-4" style="width: 600px;">
+     {% csrf_token %}
+        {{ form|crispy }}
+        <div style="display: flex; justify-content: center;">
+        <input type="submit" class="mt-2 ms-5 btn btn-outline-warning" value="{{ action }}">
+        </div>
+        <div style="min-height: 40px;"></div>
+    </form>
+    <div style="display: flex; justify-content: center;">
+    {% if messages %}
+    <ul class="messages cstm-msg">
+        {% for message in messages %}
+        <li{% if messages.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    </div>
+{% endblock %}

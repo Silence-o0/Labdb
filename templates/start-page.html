@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block mainbody %}
+    <div class="button-row" style="margin-top: 180px;">
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/performances/'">Performances</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/theaters/'">Theaters</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/directors/'">Directors</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/employees/'">Employees</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/participants/'">Participants</button>
+    </div>
+    <div class="button-row mt-4">
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/decorators/'">Decorators</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/playdirectors/'">Directors of plays</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/actors/'">Actors</button>
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/roles/'">Roles</button>
+        <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn" onclick="location.href='/put-on/'">Put on</button>
+    </div>
+    <div class="button-row mt-5">
+    <button type="button" class="btn btn-outline-info btn-lg mx-2 cstm-btn">Запити</button>
+    </div>
+{% endblock %}

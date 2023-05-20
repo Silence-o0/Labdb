@@ -1,6 +1,46 @@
 from django.contrib import admin
 from django.urls import path
+from django.views.generic import TemplateView
+
+from lab import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('main/', TemplateView.as_view(template_name="start-page.html")),
+    path('performances/', views.get_all_performances, name='list-performances'),
+    path('performances/add/', views.add_performance, name='add-performance'),
+    path('performances/delete/<title>', views.delete_performance, name='delete-performance'),
+    path('performances/edit/<title>', views.edit_performance, name='edit-performance'),
+    path('theaters/', views.get_all_theaters, name='list-theaters'),
+    path('theaters/add/', views.add_theater, name='add-theater'),
+    path('theaters/delete/<name>', views.delete_theater, name='delete-theater'),
+    path('theaters/edit/<name>', views.edit_theater, name='edit-theater'),
+    path('employees/', views.get_all_employees, name='list-employees'),
+    path('employees/add/', views.add_employee, name='add-employee'),
+    path('employees/delete/<passport>', views.delete_employee, name='delete-employee'),
+    path('employees/edit/<passport>', views.edit_employee, name='edit-employee'),
+    path('participants/', views.get_all_participants, name='list-participants'),
+    path('participants/add/', views.add_participant, name='add-participant'),
+    path('participants/delete/<employee_id>', views.delete_participant, name='delete-participant'),
+    path('directors/', views.get_all_directors, name='list-directors'),
+    path('directors/add/', views.add_director, name='add-director'),
+    path('directors/delete/<employee_id>', views.delete_director, name='delete-director'),
+    path('directors/edit/<employee_id>', views.edit_director, name='edit-director'),
+    path('decorators/', views.get_all_decorators, name='list-decorators'),
+    path('decorators/add/', views.add_decorator, name='add-decorator'),
+    path('decorators/delete/<participant_id>', views.delete_decorator, name='delete-decorator'),
+    path('playdirectors/', views.get_all_playdirectors, name='list-playdirectors'),
+    path('playdirectors/add/', views.add_playdirector, name='add-playdirector'),
+    path('playdirectors/delete/<participant_id>', views.delete_playdirector, name='delete-playdirector'),
+    path('actors/', views.get_all_actors, name='list-actors'),
+    path('actors/add/', views.add_actor, name='add-actor'),
+    path('actors/delete/<participant_id>', views.delete_actor, name='delete-actor'),
+    path('roles/', views.get_all_roles, name='list-roles'),
+    path('roles/add/', views.add_role, name='add-role'),
+    path('roles/delete/<name>', views.delete_role, name='delete-role'),
+    path('roles/edit/<name>', views.edit_role, name='edit-role'),
+    path('put-on/', views.get_all_put_on, name='list-put-on'),
+    path('put-on/add/', views.add_put_on, name='add-put-on'),
+    path('put-on/delete/<int:id>', views.delete_put_on, name='delete-put-on'),
+    path('put-on/edit/<int:id>', views.edit_put_on, name='edit-put-on'),
 ]

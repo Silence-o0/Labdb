@@ -1,0 +1,30 @@
+{% extends 'base-table-page.html' %}
+{% load static %}
+
+{% block datatable %}
+<table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Name</th>
+        <th scope="col">Address</th>
+        <th scope="col" style="width: 200px;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in theaters %}
+    <tr>
+      <th scope="row">{{ t.name }}</th>
+        {% if t.address != None %}
+      <td><div>{{ t.address }}</div></td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td>
+            <button type="button" class="btn btn-outline-success" onclick="location.href='./edit/{{ t.name }}'">Edit</button>
+            <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ t.name }}'">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

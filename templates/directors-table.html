@@ -1,0 +1,27 @@
+{% extends 'base-table-page.html' %}
+{% load static %}
+
+{% block datatable %}
+<table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Name</th>
+        <th scope="col">Theater</th>
+        <th scope="col" style="width: 200px;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in directors %}
+    <tr>
+        <th scope="row">{{ d.employee_id }}</th>
+        <td>{{ d.theater_id }}</td>
+        <td>
+            <button type="button" class="btn btn-outline-success" onclick="location.href='./edit/{{ d.employee_id }}'">Edit</button>
+            <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ d.employee_id }}'">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+    <p style="text-align: center"></p>
+{% endblock %}

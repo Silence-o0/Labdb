@@ -1,0 +1,34 @@
+{% extends 'base-table-page.html' %}
+{% load static %}
+
+{% block datatable %}
+<table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+      <th scope="col" class="ms-2">Title</th>
+      <th scope="col">Author</th>
+      <th scope="col">Genre</th>
+      <th scope="col">Description</th>
+        <th scope="col" style="width: 200px;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in performances %}
+    <tr>
+      <th scope="row">{{ p.title }}</th>
+      <td>{{ p.author }}</td>
+      <td>{{ p.genre }}</td>
+        {% if p.description != None %}
+      <td><div class="tip" data-description="{{ p.description }}">{{ p.description|truncatechars:50 }}</div></td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td>
+            <button type="button" class="btn btn-outline-success" onclick="location.href='./edit/{{ p.title }}'">Edit</button>
+            <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ p.title }}'">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base-table-page.html' %}
+{% load static %}
+
+{% block datatable %}
+<table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Name</th>
+        <th scope="col">Type</th>
+        <th scope="col">Performance</th>
+        <th scope="col">Actor</th>
+        <th scope="col" style="width: 200px;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in roles %}
+    <tr>
+        <th scope="row">{{ r.name }}</th>
+        <td>{{ r.type }}</td>
+        <td>{{ r.performance_title_id }}</td>
+        <td>{{ r.actor_id }}</td>
+        <td>
+            <button type="button" class="btn btn-outline-success" onclick="location.href='./edit/{{ r.name }}'">Edit</button>
+            <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ r.name }}'">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

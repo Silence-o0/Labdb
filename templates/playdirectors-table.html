@@ -1,0 +1,37 @@
+{% extends 'base-table-page.html' %}
+{% load static %}
+
+{% block datatable %}
+<table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+        <th scope="col">Experience (years)</th>
+        <th scope="col">Theaters</th>
+        <th scope="col" style="width: 200px;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pd in playdirectors %}
+    <tr>
+        <th scope="row">{{ pd.passport }}</th>
+        <td>{{ pd.name }}</td>
+        <td>{{ pd.experience }}</td>
+        {% if pd.theater != None %}
+      <td><div>
+          {% for th in p.theater.split %}
+          {{ th.name }}
+          {% endfor %}
+        </div></td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        <td>
+            <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ pd.passport }}'">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
