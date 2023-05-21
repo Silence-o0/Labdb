@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load static %}
+
+{% block mainbody %}
+    <div class="header-div">
+    <div style="border: 1px solid rgba(190,73,17,0.34); padding: 8px; border-radius: 4px; margin-left: 40px;">
+    <a href="/main/" class="return-link fs-6">Повернутися</a>
+    </div>
+        <div style="margin-top: 20px; margin-right: 150px;">
+            <p class="title-text">Queries</p>
+        </div>
+    </div>
+    <div class="container">
+
+    <h4 style="text-align: center;">Запит 1</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти театри, де працюють щонайменше N працівниць жіночої статі.</p>
+         <input type="number" name="query1-N" placeholder="N" min="0" class="form-control">
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Theaters</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query1 %}
+    <tr>
+        <th scope="row">{{ q.name }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+        <h4 style="text-align: center;" class="mt-5">Запит 2</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти вистави, в який бере участь працівник A.</p>
+         <select name="query2-A" class="form-control">
+             {% for p in participants %}
+             <option value="{{ p.employee_id }}">{{ p }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Performances</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query2 %}
+    <tr>
+        <th scope="row">{{ q.title }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+            <h4 style="text-align: center;" class="mt-5">Запит 3</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти всіх акторів, які мають хоча б 1 другорядну роль у театрі А.</p>
+         <select name="query3-A" class="form-control">
+             {% for th in theaters %}
+             <option value="{{ th.name }}">{{ th }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query3 %}
+    <tr>
+        <th scope="row">{{ q.passport }}</th>
+        <th scope="row">{{ q.name }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+        <h4 style="text-align: center;" class="mt-5">Запит 4</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти всі театри, директори яких мають стаж більше N років.</p>
+         <input type="number" name="query4-N" placeholder="N" min="0" class="form-control">
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Theaters</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query4 %}
+    <tr>
+        <th scope="row">{{ q.name }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+    <h4 style="text-align: center;" class="mt-5">Запит 5</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти театр, в якому працює працівник з найбільшим стажем, статі B, але не є директором.</p>
+         <select name="query5-B" class="form-control">
+             <option value="main">main</option>
+             <option value="secondary">secondary</option>
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Theaters</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query5 %}
+    <tr>
+        <th scope="row">{{ q.name }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</div>
+    <div style="min-height: 40px;"></div>
+{% endblock %}

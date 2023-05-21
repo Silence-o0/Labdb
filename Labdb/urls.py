@@ -43,4 +43,5 @@ urlpatterns = [
     path('put-on/add/', views.add_put_on, name='add-put-on'),
     path('put-on/delete/<int:id>', views.delete_put_on, name='delete-put-on'),
     path('put-on/edit/<int:id>', views.edit_put_on, name='edit-put-on'),
+    path('queries/', views.query_page, name='query-page'),
 ]

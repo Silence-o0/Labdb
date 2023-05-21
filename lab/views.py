@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
@@ -46,9 +47,8 @@ def edit_performance(request, title):
         form = PerformanceForm(request.POST or None, instance=performance)
         if form.is_valid():
             if form['title'].value() != title:
-                form.save()
-                delete_performance(request, title)
-                return redirect('list-performances')
+                messages.error(request, 'You can not change title.')
+                return redirect('edit-performance', title)
             else:
                 form.save()
                 return redirect('list-performances')
@@ -107,9 +107,8 @@ def edit_theater(request, name):
         form = TheaterForm(request.POST or None, instance=theaters)
         if form.is_valid():
             if form['name'].value() != name:
-                form.save()
-                delete_theater(request, name)
-                return redirect('list-theaters')
+                messages.error(request, 'You can not change name.')
+                return redirect('edit-theater', name)
             else:
                 form.save()
                 return redirect('list-theaters')
@@ -133,7 +132,7 @@ def delete_theater(request, name):
 
 
 def get_all_employees(request):
-    employees = Employee.objects.all().values()
+    employees = Employee.objects.all()
     template = loader.get_template('employees-table.html')
     context = {
         'employees': employees,
@@ -168,9 +167,8 @@ def edit_employee(request, passport):
         form = EmployeeForm(request.POST or None, instance=employees)
         if form.is_valid():
             if form['passport'].value() != passport:
-                form.save()
-                delete_employee(request, passport)
-                return redirect('list-employees')
+                messages.error(request, 'You can not change passport.')
+                return redirect('edit-employee', passport)
             else:
                 form.save()
                 return redirect('list-employees')
@@ -234,7 +232,7 @@ def delete_participant(request, employee_id):
 
 
 def get_all_directors(request):
-    directors = Director.objects.all().values()
+    directors = Director.objects.all()
     template = loader.get_template('directors-table.html')
     context = {
         'directors': directors,
@@ -269,9 +267,8 @@ def edit_director(request, employee_id):
     try:
         if form.is_valid():
             if form['employee'].value() != employee_id:
-                form.save()
-                delete_director(request, employee_id)
-                return redirect('list-directors')
+                messages.error(request, 'You can not change employee. But you can delete him.')
+                return redirect('edit-director', employee_id)
             else:
                 form.save()
                 return redirect('list-directors')
@@ -337,7 +334,6 @@ def delete_decorator(request, participant_id):
 def get_all_playdirectors(request):
     playdirectors = PlayDirector.objects.all().values()
     employee = Employee.objects.filter(passport__in=playdirectors)
-    print(employee)
     template = loader.get_template('playdirectors-table.html')
     context = {
         'playdirectors': employee,
@@ -416,15 +412,11 @@ def delete_actor(request, participant_id):
 
 
 def get_all_roles(request):
-    roles = Role.objects.all().values()
-    print(roles)
-    employee = Employee.objects.filter(passport__in=roles)
-
+    roles = Role.objects.all()
     template = loader.get_template('roles-table.html')
     context = {
         'roles': roles,
         'title': 'Roles',
-        'actor': employee,
     }
     return HttpResponse(template.render(context, request))
 
@@ -455,9 +447,8 @@ def edit_role(request, name):
         form = RoleForm(request.POST or None, instance=roles)
         if form.is_valid():
             if form['name'].value() != name:
-                form.save()
-                delete_role(request, name)
-                return redirect('list-roles')
+                messages.error(request, 'You can not change name.')
+                return redirect('edit-role', name)
             else:
                 form.save()
                 return redirect('list-roles')
@@ -481,8 +472,7 @@ def delete_role(request, name):
 
 
 def get_all_put_on(request):
-    put_on = PutOn.objects.all().values()
-    print(put_on)
+    put_on = PutOn.objects.all()
     template = loader.get_template('put-on-table.html')
     context = {
         'put_on': put_on,
@@ -496,11 +486,8 @@ def add_put_on(request):
         if request.method == "POST":
             form = PutOnForm(request.POST)
             queryset = PutOn.objects.filter(participant_id=form['participant'].value())
-            print(queryset)
             queryset = queryset.filter(theater_id=form['theater'].value())
-            print(queryset)
             queryset = queryset.filter(performance_id=form['performance'].value())
-            print(queryset.count())
             if queryset.count() != 0:
                 messages.error(request, 'Participant has already put on performance in that theater.')
                 return redirect('/put-on/add')
@@ -526,11 +513,8 @@ def edit_put_on(request, id):
         form = PutOnForm(request.POST or None, instance=put_on)
         if form.is_valid():
             queryset = PutOn.objects.filter(participant_id=form['participant'].value())
-            print(queryset)
             queryset = queryset.filter(theater_id=form['theater'].value())
-            print(queryset)
             queryset = queryset.filter(performance_id=form['performance'].value())
-            print(queryset.count())
             if queryset.count() != 0:
                 messages.error(request, 'Participant has already put on performance in that theater.')
                 return redirect('/put-on/add')
@@ -551,3 +535,99 @@ def delete_put_on(request, id):
     put_on = PutOn.objects.get(id=id)
     put_on.delete()
     return HttpResponseRedirect('/put-on/')
+
+
+# queries
+
+
+def query_page(request):
+    query_dict = request.GET
+    participants_all = Participant.objects.all()
+    theaters_all = Theater.objects.all()
+
+    query1_N = query_dict.get('query1-N')
+    query1 = Theater.objects.raw(
+        """
+         Select name
+        From lab_theater
+        Join lab_employee_theater on lab_employee_theater.theater_id = lab_theater.name
+        Where (
+            Select count(*)
+            From lab_employee
+            Where lab_employee.sex = 'female' and lab_employee_theater.employee_id = lab_employee.passport
+        ) >= %s
+        """,
+        [query1_N])
+
+    query2_A = query_dict.get('query2-A')
+    query2 = Performance.objects.raw(
+        """
+        Select *
+        From lab_performance
+        Join lab_puton on lab_puton.performance_id = lab_performance.title
+        Join lab_participant on lab_puton.participant_id = lab_participant.employee_id
+        Where lab_participant.employee_id = %s;
+        """,
+        [query2_A])
+
+    query3_A = query_dict.get('query3-A')
+    print()
+    query3 = Employee.objects.raw(
+        """
+        Select passport, name
+        From lab_employee
+        Where lab_employee.passport in (
+            Select distinct lab_actor.participant_id
+            From lab_actor
+            Join lab_role on lab_role.actor_id = lab_actor.participant_id
+            Join lab_performance on lab_performance.title = lab_role.performance_title_id
+            Join lab_puton on lab_performance.title = lab_puton.performance_id
+            Where lab_puton.theater_id = %s and lab_role.type = 'secondary'
+        );
+        """,
+        [query3_A])
+
+    query4_N = query_dict.get('query4-N')
+    query4 = Theater.objects.raw(
+        """
+        Select lab_theater.name
+        From lab_theater
+        Join lab_director on lab_director.theater_id = lab_theater.name
+        Join lab_employee on lab_employee.passport = lab_director.employee_id
+        Where lab_employee.experience > %s;
+        """,
+        [query4_N])
+
+    query4_N = query_dict.get('query4-N')
+    query4 = Theater.objects.raw(
+        """
+        Select lab_theater.name
+        From lab_theater
+        Join lab_director on lab_director.theater_id = lab_theater.name
+        Join lab_employee on lab_employee.passport = lab_director.employee_id
+        Where lab_employee.experience > %s;
+        """,
+        [query4_N])
+
+    query5_B = query_dict.get('query5-B')
+    query5 = Theater.objects.raw(
+        """
+        Select lab_theater.name
+        From lab_theater
+        Join lab_director on lab_director.theater_id = lab_theater.name
+        Join lab_employee on lab_employee.passport = lab_director.employee_id
+        Where lab_employee.experience > %s;
+        """,
+        [query5_B])
+
+    context = {
+        'query1': query1,
+        'query2': query2,
+        'query3': query3,
+        'query4': query4,
+        'query5': query5,
+        'participants': participants_all,
+        'theaters': theaters_all,
+    }
+    return render(request, 'queries.html', context=context)
+

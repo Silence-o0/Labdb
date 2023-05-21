@@ -1,6 +1,9 @@
+from datetime import datetime, date
+
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django import forms
-
+from django.utils.dateparse import parse_date
 
 from lab.models import *
 
@@ -49,13 +52,43 @@ class EmployeeForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['passport'].widget.attrs.update({'class': 'form-control mb-4'})
+        self.fields['passport'].widget.attrs.update(
+            {'class': 'form-control mb-4', 'Placeholder': '9 numbers or in format "XA 000000"'})
         self.fields['name'].widget.attrs.update({'class': 'form-control mb-4'})
         self.fields['sex'].widget.attrs.update({'class': 'form-control mb-4'})
         self.fields['birthdate'].widget.attrs.update({'class': 'form-control mb-4', 'Placeholder': 'YYYY-MM-DD'})
-        self.fields['experience'].widget.attrs.update({'class': 'form-control mb-4', 'Placeholder': 'Years of experience'})
+        self.fields['experience'].widget.attrs.update(
+            {'class': 'form-control mb-4', 'Placeholder': 'Years of experience'})
         self.fields['position'].widget.attrs.update({'class': 'form-control mb-4'})
         self.fields['theater'].widget.attrs.update({'class': 'form-control mb-4'})
+
+    def clean_birthdate(self):
+        birthdate = self.cleaned_data.get('birthdate')
+        print(birthdate)
+        if birthdate is not None:
+            if not date(1900, 1, 1) < birthdate < date.today():
+                raise ValidationError('This date is invalid. Please, check it.')
+        return birthdate
+
+    def clean_passport(self):
+        super(EmployeeForm, self).clean()
+        passport = self.cleaned_data.get('passport')
+        if len(passport) != 9:
+            self._errors['passport'] = self.error_class([
+                'Passport is invalid. Please, check it.'])
+        if passport.find(' ') != -1:
+            div = passport.split(' ')
+            if len(div[0]) != 2 or div[0].isalpha() == False:
+                self._errors['passport'] = self.error_class([
+                    'Passport is invalid. Please, check it.'])
+            if len(div[1]) != 6 or div[1].isnumeric() == False:
+                self._errors['passport'] = self.error_class([
+                    'Passport is invalid. Please, check it.'])
+        else:
+            if passport.isnumeric() == False:
+                self._errors['passport'] = self.error_class([
+                    'Passport is invalid. Please, check it.'])
+        return passport
 
 
 class ParticipantForm(ModelForm):
@@ -83,6 +116,17 @@ class DirectorForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['employee'].widget.attrs.update({'class': 'form-control mb-4'})
         self.fields['theater'].widget.attrs.update({'class': 'form-control mb-4'})
+
+    # def clean_theater(self):
+    #     theater = self.cleaned_data.get('theater')
+    #     print(theater)
+    #     employee = self.cleaned_data.get('employee').passport
+    #     print(employee)
+    #     queryset = Employee.objects.get(passport=employee).theater
+    #     print(queryset)
+    #     if theater not in queryset.theater:
+    #         raise ValidationError('This person is not employee of selected theater.')
+    #     return theater
 
 
 class DecoratorForm(ModelForm):

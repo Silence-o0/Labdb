@@ -62,3 +62,7 @@
 .cstm-msg {
     text-align: center;
 }
+.query-text {
+    margin-left: 40px;
+    font-size: 16px;
+}

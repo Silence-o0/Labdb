@@ -18,7 +18,7 @@
         <th scope="row">{{ r.name }}</th>
         <td>{{ r.type }}</td>
         <td>{{ r.performance_title_id }}</td>
-        <td>{{ r.actor_id }}</td>
+        <td>{{ r.actor.participant.employee.name }}</td>
         <td>
             <button type="button" class="btn btn-outline-success" onclick="location.href='./edit/{{ r.name }}'">Edit</button>
             <button type="button" class="btn btn-outline-danger" onclick="location.href='./delete/{{ r.name }}'">Delete</button>
