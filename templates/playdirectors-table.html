@@ -20,7 +20,7 @@
         <td>{{ pd.experience }}</td>
         {% if pd.theater != None %}
       <td><div>
-          {% for th in p.theater.split %}
+          {% for th in pd.theater.all %}
           {{ th.name }}
           {% endfor %}
         </div></td>

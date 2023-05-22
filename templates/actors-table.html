@@ -22,7 +22,7 @@
         <td>{{ a.experience }}</td>
         {% if a.theater != None %}
       <td><div>
-          {% for th in a.theater.split %}
+          {% for th in a.theater.all %}
           {{ th.name }}
           {% endfor %}
         </div></td>

@@ -117,17 +117,6 @@ class DirectorForm(ModelForm):
         self.fields['employee'].widget.attrs.update({'class': 'form-control mb-4'})
         self.fields['theater'].widget.attrs.update({'class': 'form-control mb-4'})
 
-    # def clean_theater(self):
-    #     theater = self.cleaned_data.get('theater')
-    #     print(theater)
-    #     employee = self.cleaned_data.get('employee').passport
-    #     print(employee)
-    #     queryset = Employee.objects.get(passport=employee).theater
-    #     print(queryset)
-    #     if theater not in queryset.theater:
-    #         raise ValidationError('This person is not employee of selected theater.')
-    #     return theater
-
 
 class DecoratorForm(ModelForm):
     error_css_class = 'error-field'
