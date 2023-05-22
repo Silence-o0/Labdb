@@ -4,7 +4,7 @@
 {% block mainbody %}
     <div class="header-div">
     <div style="border: 1px solid rgba(190,73,17,0.34); padding: 8px; border-radius: 4px; margin-left: 40px;">
-    <a href="/{% if title == 'Put on' %}put-on{% else %}{{ title.lower }}{% endif %}/" class="return-link fs-6">Повернутися</a>
+    <a href="/{% if title == 'Put on' %}put-on {% elif title == 'Directors of plays' %}playdirectors{% else %}{{ title.lower }}{% endif %}/" class="return-link fs-6">Return</a>
     </div>
         <div style="margin-top: 20px; margin-right: 150px;">
             <p class="title-text">{{ title }}</p>
