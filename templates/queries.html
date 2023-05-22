@@ -36,7 +36,7 @@
 
         <h4 style="text-align: center;" class="mt-5">Запит 2</h4>
      <form method="get">
-         <p class="query-text mt-4">Знайти вистави, в який бере участь працівник A.</p>
+         <p>A:</p><p class="query-text mt-4">Знайти вистави, в який бере участь працівник A.</p>
          <select name="query2-A" class="form-control">
              {% for p in participants %}
              <option value="{{ p.employee_id }}">{{ p }}</option>
@@ -62,7 +62,7 @@
             <h4 style="text-align: center;" class="mt-5">Запит 3</h4>
      <form method="get">
          <p class="query-text mt-4">Знайти всіх акторів, які мають хоча б 1 другорядну роль у театрі А.</p>
-         <select name="query3-A" class="form-control">
+         <p>A:</p><select name="query3-A" class="form-control">
              {% for th in theaters %}
              <option value="{{ th.name }}">{{ th }}</option>
              {% endfor %}
@@ -110,9 +110,9 @@
     <h4 style="text-align: center;" class="mt-5">Запит 5</h4>
      <form method="get">
          <p class="query-text mt-4">Знайти театр, в якому працює працівник з найбільшим стажем, статі B, але не є директором.</p>
-         <select name="query5-B" class="form-control">
-             <option value="main">main</option>
-             <option value="secondary">secondary</option>
+         <p>B:</p><select name="query5-B" class="form-control">
+             <option value="male">male</option>
+             <option value="female">female</option>
          </select>
          <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
      </form>
@@ -126,6 +126,141 @@
     {% for q in query5 %}
     <tr>
         <th scope="row">{{ q.name }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+        <h4 style="text-align: center;" class="mt-5">Запит 6</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти працівників, які працюють тільки в тих театрах, де і працівник А, і в жодних інших.</p>
+         <p>A:</p><select name="query6-A" class="form-control">
+             {% for e in employees %}
+             <option value="{{ e.passport }}">{{ e }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query6 %}
+    <tr>
+        <th scope="row">{{ q.passport }}</th>
+        <th scope="row">{{ q.name }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+        <h4 style="text-align: center;" class="mt-5">Запит 7</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти працівників, які беруть участь у всіх виставах театру А.</p>
+         <p>A:</p><select name="query7-A" class="form-control">
+             {% for th in theaters %}
+             <option value="{{ th.name }}">{{ th }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q1 in query7 %}
+    <tr>
+        <th scope="row">{{ q1.employee.passport }}</th>
+        <th scope="row">{{ q1.employee }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+            <h4 style="text-align: center;" class="mt-5">Запит 8</h4>
+     <form method="get">
+         <p class="query-text mt-4">Знайти акторів, які грають у всіх тих же виставах, що і актор А, і обов'язково ще в якихось.</p>
+         <p>A:</p><select name="query8-A" class="form-control">
+             {% for a in actors %}
+             <option value="{{ a.participant_id }}">{{ a }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q in query8 %}
+    <tr>
+        <th scope="row">{{ q.participant_id }}</th>
+        <th scope="row">{{ q }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+        <h4 style="text-align: center;" class="mt-5">Запит 9</h4>
+     <form method="get">
+         <p class="query-text mt-4">Умова запиту 9.</p>
+         <p>A:</p><select name="query9-A" class="form-control">
+             {% for th in theaters %}
+             <option value="{{ th.name }}">{{ th }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q2 in query9 %}
+    <tr>
+        <th scope="row">{{ q2.employee.passport }}</th>
+        <th scope="row">{{ q2.employee }}</th>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+        <h4 style="text-align: center;" class="mt-5">Запит 10</h4>
+     <form method="get">
+         <p class="query-text mt-4">Умова запиту 10.</p>
+         <p>A:</p><select name="query10-A" class="form-control">
+             {% for th in theaters %}
+             <option value="{{ th.name }}">{{ th }}</option>
+             {% endfor %}
+         </select>
+         <button type="submit" class="btn btn-outline-secondary mt-2 mb-3 ms-5">Search</button>
+     </form>
+    <table class="table mt-2" style="text-align: center; font-size: 14px;">
+  <thead class="thead-dark" style="background-color: #ffe1bc;">
+    <tr>
+        <th scope="col" class="ms-2">Passport</th>
+        <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for q3 in query10 %}
+    <tr>
+        <th scope="row">{{ q3.employee.passport }}</th>
+        <th scope="row">{{ q3.employee }}</th>
     </tr>
     {% endfor %}
   </tbody>

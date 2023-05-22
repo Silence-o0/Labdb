@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
@@ -544,18 +543,22 @@ def query_page(request):
     query_dict = request.GET
     participants_all = Participant.objects.all()
     theaters_all = Theater.objects.all()
+    employees_all = Employee.objects.all()
+    actors_all = Actor.objects.all()
 
     query1_N = query_dict.get('query1-N')
     query1 = Theater.objects.raw(
         """
-         Select name
-        From lab_theater
-        Join lab_employee_theater on lab_employee_theater.theater_id = lab_theater.name
-        Where (
-            Select count(*)
-            From lab_employee
-            Where lab_employee.sex = 'female' and lab_employee_theater.employee_id = lab_employee.passport
-        ) >= %s
+        Select *
+        From lab_theater th
+        Where th.name in (
+            Select lab_employee_theater.theater_id
+                From lab_employee_theater
+                Join lab_employee on lab_employee_theater.employee_id = lab_employee.passport
+                Where lab_employee.sex = 'female'
+                Group by lab_employee_theater.theater_id
+                Having count(lab_employee_theater.employee_id) >= %s
+            )
         """,
         [query1_N])
 
@@ -571,7 +574,6 @@ def query_page(request):
         [query2_A])
 
     query3_A = query_dict.get('query3-A')
-    print()
     query3 = Employee.objects.raw(
         """
         Select passport, name
@@ -614,11 +616,119 @@ def query_page(request):
         """
         Select lab_theater.name
         From lab_theater
-        Join lab_director on lab_director.theater_id = lab_theater.name
-        Join lab_employee on lab_employee.passport = lab_director.employee_id
-        Where lab_employee.experience > %s;
+        Join lab_employee_theater on lab_theater.name = lab_employee_theater.theater_id
+        JOIN lab_employee on lab_employee.passport = lab_employee_theater.employee_id
+        Where lab_employee.experience in (
+            Select max(e.experience)
+            From lab_employee e
+            Where e.passport not in (
+                Select employee_id
+                From lab_director
+            )
+            and lab_employee.sex = %s);
         """,
         [query5_B])
+
+    query6_A = query_dict.get('query6-A')
+    query6 = Employee.objects.raw(
+        """
+        Select distinct lab_employee.passport, lab_employee.name
+        From lab_employee
+        Join lab_employee_theater on lab_employee.passport = lab_employee_theater.employee_id
+        Where exists(
+                      Select *
+                      From lab_theater lt
+                            Join lab_employee_theater let on lt.name = let.theater_id
+                            Join lab_employee le on let.employee_id = le.passport
+                      Where le.passport = %s and lab_employee_theater.theater_id = lt.name
+        )
+        and not exists(
+                      Select *
+                      From lab_employee e0
+                      Join lab_employee_theater et0 on e0.passport = et0.employee_id
+                      Join lab_theater t0 on et0.theater_id = t0.name
+                      Where t0.name not in (
+                            Select t2.name
+                            From lab_theater t2
+                            Join lab_employee_theater et2 on t2.name = et2.theater_id
+                            Join lab_employee e2 on et2.employee_id = e2.passport
+                            Where e2.passport = %s
+                            )
+                      and e0.passport = lab_employee.passport
+        );
+        """,
+        [query6_A, query6_A])
+
+    query7_A = query_dict.get('query7-A')
+    query7 = Participant.objects.raw(
+        """
+        Select *
+        From lab_participant
+        Where not exists(
+                Select distinct p1.employee_id
+                From lab_participant p1
+                Join lab_puton po1 on po1.participant_id = p1.employee_id
+                Join lab_performance lp on po1.performance_id = lp.title
+                Where lp.title not in (
+                    Select distinct p0.performance_id
+                    From lab_puton p0
+                    Where p0.theater_id = %s
+                    )
+                and lab_participant.employee_id = p1.employee_id
+            );
+        """,
+        [query7_A])
+
+    query8 = None
+    query8_A = query_dict.get('query8-A')
+    if query8_A is not None:
+        query8 = Actor.objects.raw(
+            """
+                Select distinct participant_id
+                From lab_actor
+                Where not exists(
+                        Select distinct p1.participant_id
+                        From lab_actor p1
+                        Join lab_role po1 on po1.actor_id = p1.participant_id
+                        Join lab_performance lp on po1.actor_id = lp.title
+                        Where lp.title not in (
+                            Select distinct p0.actor_id
+                            From lab_role p0
+                            Where p0.actor_id = %s
+                            )
+                        and lab_actor.participant_id = p1.participant_id
+                    )
+                and exists(
+                    Select *
+                    From lab_actor a
+                    Join lab_role r on r.actor_id = a.participant_id
+                    Where r.performance_title_id not in (
+                        Select distinct rl.performance_title_id
+                        From lab_role rl
+                        Where rl.actor_id = %s
+                        )
+                    and lab_actor.participant_id = a.participant_id
+                    );
+            """,
+            [query8_A, query8_A])
+
+    query9 = None
+    query9_A = query_dict.get('query9-A')
+    # if query9_A is not None:
+    #     query9 = Actor.objects.raw(
+    #         """
+    #         Запит 1
+    #         """,
+    #         [query9_A])
+
+    query10 = None
+    # query10_A = query_dict.get('query10-A')
+    # if query10_A is not None:
+    #     query10 = Actor.objects.raw(
+    #         """
+    #         Запит 2
+    #         """,
+    #         [query10_A])
 
     context = {
         'query1': query1,
@@ -626,8 +736,15 @@ def query_page(request):
         'query3': query3,
         'query4': query4,
         'query5': query5,
+        'query6': query6,
+        'query7': query7,
+        'query8': query8,
+        'query9': query9,
+        'query10': query10,
         'participants': participants_all,
         'theaters': theaters_all,
+        'employees': employees_all,
+        'actors': actors_all,
     }
     return render(request, 'queries.html', context=context)
 

@@ -30,7 +30,7 @@
         <td>{{ e.position }}</td>
         {% if e.theater != None %}
       <td><div>
-          {% for th in e.theater%}
+          {% for th in e.theater.split %}
           {{ th.name }}
           {% endfor %}
         </div></td>
